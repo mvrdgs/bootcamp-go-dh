@@ -1,4 +1,4 @@
-package d1
+package dia1
 
 import "fmt"
 

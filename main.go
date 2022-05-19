@@ -1,7 +1,7 @@
 package main
 
-import "github.com/mvrdgs/bootcamp-go-dh/dia1/d1"
+import "github.com/mvrdgs/bootcamp-go-dh/dia1"
 
 func main() {
-	d1.Imprime()
+	dia1.Imprime()
 }
