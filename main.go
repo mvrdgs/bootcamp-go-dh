@@ -1,9 +1,14 @@
 package main
 
-import "github.com/mvrdgs/bootcamp-go-dh/dia1"
+import (
+	"fmt"
+
+	"github.com/mvrdgs/bootcamp-go-dh/dia1"
+	"github.com/mvrdgs/bootcamp-go-dh/dia2"
+)
 
 func main() {
-	// dia1.Imprime()
+	dia1.Imprime()
 	// dia1.Clima(16, 1013.25, 84)
 	// dia1.TiposDeDados()
 	// dia1.WordLetters("go meli go")
@@ -12,5 +17,7 @@ func main() {
 	// dia1.Loan(23, true, 2, 100000)
 	// dia1.PrintMonth(9)
 	// dia1.PrintMonth(13)
-	dia1.Employees()
+	// dia1.Employees()
+	fmt.Printf("%.2f\n", dia2.SalaryTax(50000))
+	fmt.Printf("%.2f\n", dia2.SalaryTax(150000))
 }
