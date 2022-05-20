@@ -10,5 +10,6 @@ func main() {
 	// dia2.Media(7, 5, 6)
 	// dia2.Media(7, 5, 6, -2)
 	// dia2.CalculateSalary()
-	dia2.Calc()
+	// dia2.Calc()
+	dia2.CalcFood()
 }
