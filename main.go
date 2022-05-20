@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/mvrdgs/bootcamp-go-dh/dia1"
 	"github.com/mvrdgs/bootcamp-go-dh/dia2"
 )
@@ -18,6 +16,8 @@ func main() {
 	// dia1.PrintMonth(9)
 	// dia1.PrintMonth(13)
 	// dia1.Employees()
-	fmt.Printf("%.2f\n", dia2.SalaryTax(50000))
-	fmt.Printf("%.2f\n", dia2.SalaryTax(150000))
+	// fmt.Printf("%.2f\n", dia2.SalaryTax(50000))
+	// fmt.Printf("%.2f\n", dia2.SalaryTax(150000))
+	dia2.Media(7, 5, 6)
+	dia2.Media(7, 5, 6, -2)
 }
