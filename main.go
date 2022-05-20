@@ -18,6 +18,7 @@ func main() {
 	// dia1.Employees()
 	// fmt.Printf("%.2f\n", dia2.SalaryTax(50000))
 	// fmt.Printf("%.2f\n", dia2.SalaryTax(150000))
-	dia2.Media(7, 5, 6)
-	dia2.Media(7, 5, 6, -2)
+	// dia2.Media(7, 5, 6)
+	// dia2.Media(7, 5, 6, -2)
+	dia2.CalculateSalary()
 }
