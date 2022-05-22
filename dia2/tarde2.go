@@ -32,7 +32,7 @@ func (l loja) Total() float64 {
 
 // - Deve possuir o método “Adicionar”, onde o mesmo deve receber um novo produto
 // e adicioná-lo a lista da loja
-func (l loja) Adicionar(p produto) {
+func (l *loja) Adicionar(p produto) {
 	l.produtos = append(l.produtos, p)
 }
 
@@ -71,5 +71,5 @@ func NovoProduto(nome, tipo string, preco float64) produto {
 
 // - Será necessário uma função “novaLoja” que retorne um Ecommerce.
 func NovaLoja() Ecommerce {
-	return loja{make([]produto, 0)}
+	return &loja{make([]produto, 0)}
 }

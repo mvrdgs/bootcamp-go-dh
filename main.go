@@ -13,13 +13,13 @@ func main() {
 	macBook := dia2.NovoProduto("MacBook Pro", "Medio", 20000.00)
 	frigobar := dia2.NovoProduto("Frigobar", "Grande", 3000.00)
 
-	fmt.Println(mouse.CalcularCusto())
-	fmt.Println(macBook.CalcularCusto())
-	fmt.Println(frigobar.CalcularCusto())
+	fmt.Println("Custo mouse: ", mouse.CalcularCusto())
+	fmt.Println("Custo Mac Book: ", macBook.CalcularCusto())
+	fmt.Println("Custo Frigobar: ", frigobar.CalcularCusto())
 
 	loja.Adicionar(mouse)
 	loja.Adicionar(macBook)
 	loja.Adicionar(frigobar)
 
-	fmt.Println(loja.Total())
+	fmt.Println("Total: ", loja.Total())
 }
