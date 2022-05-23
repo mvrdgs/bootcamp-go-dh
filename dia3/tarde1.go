@@ -13,10 +13,18 @@ import (
 // 3. Estes valores podem ser hardcodeados ou escritos manualmente em uma variável.
 
 func SaveProduct(id, qtd int, price float64) {
-	info := fmt.Sprintf("%d %d %.2f;\n", id, qtd, price)
+	info := fmt.Sprintf("%d,%d,%.2f\n", id, qtd, price)
+
+	_, err := os.Stat("./ProductInfo.csv")
+
+	if err != nil {
+		table := "ID,Preco,Quantidade\n"
+		content := []byte(table)
+		os.WriteFile("./ProductInfo.csv", content, 0777)
+	}
 
 	f, err := os.OpenFile("./ProductInfo.csv",
-		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0777)
+		os.O_APPEND|os.O_WRONLY, 0777)
 	if err != nil {
 		log.Println(err)
 	}

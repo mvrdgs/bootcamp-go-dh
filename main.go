@@ -5,5 +5,6 @@ import (
 )
 
 func main() {
-	dia3.SaveProduct(1, 10, 36.35)
+	// dia3.SaveProduct(3, 500, 10.30)
+	dia3.ReadProductFile("./ProductInfo.csv")
 }
