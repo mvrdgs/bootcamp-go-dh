@@ -7,21 +7,21 @@ import (
 )
 
 func main() {
-	user := dia4.User{
-		Nome:      "teste",
-		Sobrenome: "silva",
-		Idade:     19,
-		Email:     "teste@teste.com",
-		Senha:     "12345",
+	user := dia4.Usuario{
+		Nome:      "user1",
+		Sobrenome: "sobreuser1",
 	}
 
-	fmt.Println(user)
+	user2 := dia4.Usuario{
+		Nome:      "user2",
+		Sobrenome: "sobreuser2",
+	}
 
-	user.MudarNome("testado")
-	user.MudarSobrenome("silavado")
-	user.MudarIdade(200)
-	user.MudarEmail("testado@testado.com")
-	user.MudarSenha("senhatestada123")
+	produto1 := dia4.NovoProduto("MacBook", 20000.00)
+
+	dia4.AdicionarProduto(&user, produto1, 10)
+	dia4.AdicionarProduto(&user2, produto1, 50)
 
 	fmt.Println(user)
+	fmt.Println(user2)
 }
