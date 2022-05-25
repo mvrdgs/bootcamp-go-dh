@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	dia5.Tarde3(1500)
-	dia5.Tarde3(15000)
+	dia5.Tarde4(220, 32)
+	dia5.Tarde4(50, 32)
 }
