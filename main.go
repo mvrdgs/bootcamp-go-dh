@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	dia4.Tarde3()
+	dia4.Tarde4()
 }
