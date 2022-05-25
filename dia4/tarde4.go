@@ -135,6 +135,4 @@ func Tarde4() {
 	compare(variavel2)
 	fmt.Println("\n10000 numeros")
 	compare(variavel3)
-	// fmt.Println(variavel2)
-	// fmt.Println(variavel3)
 }
