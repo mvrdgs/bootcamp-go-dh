@@ -17,7 +17,7 @@ func checkTax2(salario int) (string, error) {
 }
 
 func Tarde2(salario int) {
-	msg, err := checkTax(salario)
+	msg, err := checkTax2(salario)
 
 	if err != nil {
 		fmt.Println(err)
