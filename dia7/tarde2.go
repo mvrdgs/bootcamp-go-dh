@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"strconv"
 )
 
 type Products struct {
@@ -36,6 +38,36 @@ func ReadFile() Products {
 	return data
 }
 
+func getAll(c *gin.Context) {
+	data := ReadFile()
+	c.JSON(http.StatusOK, data)
+}
+
+func getById(c *gin.Context) {
+	data := ReadFile()
+	products := make(map[int]Product)
+
+	for _, product := range data.Products {
+		products[product.Id] = product
+	}
+
+	log.Println(products)
+
+	param, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "id precisa ser um número")
+	}
+
+	product, ok := products[param]
+
+	if ok {
+		c.JSON(http.StatusOK, product)
+	} else {
+		c.JSON(http.StatusNotFound, "produto não encontrado")
+	}
+}
+
 func Tarde2() {
 	router := gin.Default()
 
@@ -45,11 +77,12 @@ func Tarde2() {
 		})
 	})
 
-	data := ReadFile()
+	group := router.Group("/products")
 
-	router.GET("/products", func(c *gin.Context) {
-		c.JSON(http.StatusOK, data)
-	})
+	{
+		group.GET("/", getAll)
+		group.GET("/:id", getById)
+	}
 
 	router.Run()
 }
