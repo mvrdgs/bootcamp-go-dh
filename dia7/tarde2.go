@@ -8,9 +8,9 @@ import (
 	"net/http"
 )
 
-//type Products struct {
-//	Products []Product `json:"products"`
-//}
+type Products struct {
+	Products []Product `json:"products"`
+}
 
 type Product struct {
 	Id            int     `json:"id,omitempty"`
@@ -23,19 +23,17 @@ type Product struct {
 	DataDeCriacao string  `json:"data_de_criacao,omitempty"`
 }
 
-func ReadFile() []Product {
+func ReadFile() Products {
 	file, _ := ioutil.ReadFile("./dia7/products.json")
 
 	data := make([]Product, 0)
-
-	fmt.Println(string(file))
 
 	err := json.Unmarshal([]byte(file), &data)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	return data
+	return Products{data}
 }
 
 func Tarde2() {
