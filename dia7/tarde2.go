@@ -26,14 +26,14 @@ type Product struct {
 func ReadFile() Products {
 	file, _ := ioutil.ReadFile("./dia7/products.json")
 
-	data := make([]Product, 0)
+	data := Products{}
 
-	err := json.Unmarshal([]byte(file), &data)
+	err := json.Unmarshal(file, &data.Products)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	return Products{data}
+	return data
 }
 
 func Tarde2() {
