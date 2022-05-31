@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -13,6 +12,8 @@ import (
 type Products struct {
 	Products []Product `json:"products"`
 }
+
+var products Products
 
 type Product struct {
 	Id            int     `json:"id,omitempty"`
@@ -25,7 +26,7 @@ type Product struct {
 	DataDeCriacao string  `json:"data_de_criacao,omitempty"`
 }
 
-func ReadFile(c *gin.Context) Products {
+func ReadFile() Products {
 	file, _ := ioutil.ReadFile("./dia7/products.json")
 
 	data := Products{}
@@ -35,32 +36,19 @@ func ReadFile(c *gin.Context) Products {
 		fmt.Println(err)
 	}
 
-	query := c.Request.URL.Query()
-	log.Println(query)
-
-	if len(query) == 0 {
-		return data
-	}
-
-	filteredData := Products{make([]Product, 0)}
-
-	// falta fazer filtro
-	filteredData = data
-
-	return filteredData
+	return data
 }
 
 func getAll(c *gin.Context) {
-	data := ReadFile(c)
+	data := products.Products
 	c.JSON(http.StatusOK, data)
 }
 
 func getById(c *gin.Context) {
-	data := ReadFile(c)
-	products := make(map[int]Product)
+	data := make(map[int]Product)
 
-	for _, product := range data.Products {
-		products[product.Id] = product
+	for _, product := range products.Products {
+		data[product.Id] = product
 	}
 
 	param, err := strconv.Atoi(c.Param("id"))
@@ -69,7 +57,7 @@ func getById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "id precisa ser um número")
 	}
 
-	product, ok := products[param]
+	product, ok := data[param]
 
 	if ok {
 		c.JSON(http.StatusOK, product)
@@ -78,20 +66,32 @@ func getById(c *gin.Context) {
 	}
 }
 
+func createProduct(c *gin.Context) {
+	var product Product
+
+	if err := c.ShouldBindJSON(&product); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	product.Id = len(products.Products) + 1
+	products.Products = append(products.Products, product)
+
+	c.JSON(http.StatusOK, product)
+}
+
 func Tarde2() {
 	router := gin.Default()
-
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Hello Maurício",
-		})
-	})
+	products = ReadFile()
 
 	group := router.Group("/products")
 
 	{
 		group.GET("/", getAll)
 		group.GET("/:id", getById)
+		group.POST("/", createProduct)
 	}
 
 	router.Run()
