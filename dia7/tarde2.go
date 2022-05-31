@@ -17,13 +17,13 @@ var products Products
 
 type Product struct {
 	Id            int     `json:"id,omitempty"`
-	Nome          string  `json:"nome,omitempty"`
-	Cor           string  `json:"cor,omitempty"`
-	Preco         float64 `json:"preco,omitempty"`
-	Estoque       int     `json:"estoque,omitempty"`
-	Codigo        string  `json:"codigo,omitempty"`
-	Publicacao    bool    `json:"publicacao,omitempty"`
-	DataDeCriacao string  `json:"data_de_criacao,omitempty"`
+	Nome          string  `json:"nome,omitempty" binding:"required"`
+	Cor           string  `json:"cor,omitempty" binding:"required"`
+	Preco         float64 `json:"preco,omitempty" binding:"required"`
+	Estoque       int     `json:"estoque,omitempty" binding:"required"`
+	Codigo        string  `json:"codigo,omitempty" binding:"required"`
+	Publicacao    bool    `json:"publicacao,omitempty" binding:"required"`
+	DataDeCriacao string  `json:"data_de_criacao,omitempty" binding:"required"`
 }
 
 func ReadFile() Products {
@@ -68,6 +68,14 @@ func getById(c *gin.Context) {
 
 func createProduct(c *gin.Context) {
 	var product Product
+
+	token := c.GetHeader("token")
+	if token != "token super seguro" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "token inválido",
+		})
+		return
+	}
 
 	if err := c.ShouldBindJSON(&product); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
