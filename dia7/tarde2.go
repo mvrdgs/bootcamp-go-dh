@@ -25,7 +25,7 @@ type Product struct {
 	DataDeCriacao string  `json:"data_de_criacao,omitempty"`
 }
 
-func ReadFile() Products {
+func ReadFile(c *gin.Context) Products {
 	file, _ := ioutil.ReadFile("./dia7/products.json")
 
 	data := Products{}
@@ -35,23 +35,33 @@ func ReadFile() Products {
 		fmt.Println(err)
 	}
 
-	return data
+	query := c.Request.URL.Query()
+	log.Println(query)
+
+	if len(query) == 0 {
+		return data
+	}
+
+	filteredData := Products{make([]Product, 0)}
+
+	// falta fazer filtro
+	filteredData = data
+
+	return filteredData
 }
 
 func getAll(c *gin.Context) {
-	data := ReadFile()
+	data := ReadFile(c)
 	c.JSON(http.StatusOK, data)
 }
 
 func getById(c *gin.Context) {
-	data := ReadFile()
+	data := ReadFile(c)
 	products := make(map[int]Product)
 
 	for _, product := range data.Products {
 		products[product.Id] = product
 	}
-
-	log.Println(products)
 
 	param, err := strconv.Atoi(c.Param("id"))
 
