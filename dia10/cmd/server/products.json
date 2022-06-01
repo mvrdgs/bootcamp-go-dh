@@ -1,0 +1,16 @@
+[
+ {
+  "id": 1,
+  "name": "produto 1",
+  "type": "tipo teste 1",
+  "count": 10,
+  "price": 10.99
+ },
+ {
+  "id": 2,
+  "name": "teste2",
+  "type": "tipo teste 2",
+  "count": 20,
+  "price": 20.99
+ }
+]

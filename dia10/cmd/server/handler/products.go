@@ -18,10 +18,12 @@ type Product struct {
 	service products.Service
 }
 
+var TOKEN string
+
 func (p *Product) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := ctx.Request.Header.Get("token")
-		if token != "123456" {
+		if token != TOKEN {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"error": "token inválido",
 			})
@@ -43,7 +45,7 @@ func (p *Product) GetAll() gin.HandlerFunc {
 func (p *Product) Store() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := ctx.Request.Header.Get("token")
-		if token != "123456" {
+		if token != TOKEN {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"error": "token inválido",
 			})
@@ -73,7 +75,7 @@ func (p *Product) Store() gin.HandlerFunc {
 func (p *Product) Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := ctx.Request.Header.Get("token")
-		if token != "123456" {
+		if token != TOKEN {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"error": "token inválido",
 			})
