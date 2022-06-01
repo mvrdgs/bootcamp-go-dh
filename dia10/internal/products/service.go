@@ -5,6 +5,7 @@ import "log"
 type Service interface {
 	GetAll() ([]Product, error)
 	Store(name, tipo string, count int, price float64) (Product, error)
+	Update(id int, name, tipo string, count int, price float64) (Product, error)
 }
 type service struct {
 	repository Repository
@@ -34,6 +35,10 @@ func (s *service) Store(name, tipo string, count int, price float64) (Product, e
 	}
 
 	return product, nil
+}
+
+func (s *service) Update(id int, name, tipo string, count int, price float64) (Product, error) {
+	return s.repository.Update(id, name, tipo, count, price)
 }
 
 func NewService(r Repository) Service {
