@@ -13,14 +13,16 @@ type Product struct {
 	Price float64 `json:"price"`
 }
 
-var ps []Product
-var lastID int
+//var ps []Product
+//var lastID int
 
 type Repository interface {
 	GetAll() ([]Product, error)
 	Store(id int, name, tipo string, count int, price float64) (Product, error)
 	LastID() (int, error)
 	Update(id int, name, tipo string, count int, price float64) (Product, error)
+	UpdateName(id int, name string) (Product, error)
+	Delete(id int) error
 }
 
 type repository struct {
@@ -96,6 +98,59 @@ func (r *repository) Update(id int, name, tipo string, count int, price float64)
 		return Product{}, err
 	}
 	return p, nil
+}
+
+func (r *repository) UpdateName(id int, name string) (Product, error) {
+	var ps []Product
+	if err := r.db.Read(&ps); err != nil {
+		return Product{}, err
+	}
+
+	var p Product
+	updated := false
+	for i := range ps {
+		if ps[i].ID == id {
+			ps[i].Name = name
+			updated = true
+			p = ps[i]
+		}
+	}
+
+	if !updated {
+		return Product{}, fmt.Errorf("Produto %d não encontrado", id)
+	}
+
+	if err := r.db.Write(ps); err != nil {
+		return Product{}, err
+	}
+
+	return p, nil
+}
+
+func (r *repository) Delete(id int) error {
+	var ps []Product
+	if err := r.db.Read(&ps); err != nil {
+		return err
+	}
+
+	deleted := false
+	var index int
+	for i := range ps {
+		if ps[i].ID == id {
+			index = i
+			deleted = true
+		}
+	}
+
+	if !deleted {
+		return fmt.Errorf("Produto %d não encontrado", id)
+	}
+
+	ps = append(ps[:index], ps[index+1:]...)
+	if err := r.db.Write(ps); err != nil {
+		return err
+	}
+	return nil
 }
 
 func NewRepository(db store.Store) Repository {
