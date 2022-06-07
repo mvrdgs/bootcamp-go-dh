@@ -34,8 +34,7 @@ var TOKEN string
 // @Produce json
 // @Param token header string true "token"
 // @Success 200 {object} web.Response
-// @Failure 400 {object} web.Response
-// @Failure 401 {object} web.Response
+// @Failure 404 {object} web.Response
 // @Router /products [get]
 func (p *Product) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -59,19 +58,19 @@ func (p *Product) GetAll() gin.HandlerFunc {
 // @Param product body request true "Product to store"
 // @Success 201 {object} web.Response
 // @Failure 401 {object} web.Response
-// @Failure 404 {object} web.Response
+// @Failure 400 {object} web.Response
 // @Router /products [post]
 func (p *Product) Store() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req request
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.JSON(http.StatusNotFound, web.NewResponse(http.StatusNotFound, nil, err.Error()))
+			ctx.JSON(http.StatusBadRequest, web.NewResponse(http.StatusBadRequest, nil, err.Error()))
 			return
 		}
 
 		product, err := p.service.Store(req.Name, req.Type, req.Count, req.Price)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, web.NewResponse(http.StatusNotFound, nil, err.Error()))
+			ctx.JSON(http.StatusBadRequest, web.NewResponse(http.StatusBadRequest, nil, err.Error()))
 			return
 		}
 

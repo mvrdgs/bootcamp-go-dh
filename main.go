@@ -1,9 +1,9 @@
 package main
 
 import (
-	server2 "github.com/mvrdgs/bootcamp-go-dh/dia10/cmd/server"
+	"github.com/mvrdgs/bootcamp-go-dh/sprint2-dia1/calc"
 )
 
 func main() {
-	server2.Main()
+	calc.Sum(10, 5)
 }
