@@ -41,7 +41,17 @@ func TestDiv(t *testing.T) {
 	num2 := 5
 	expectedResult := 2
 
-	result := Div(num1, num2)
+	result, _ := Div(num1, num2)
 
 	assert.Equal(t, expectedResult, result, "devem ser iguais")
+}
+
+func TestDivFail(t *testing.T) {
+	num1 := 10
+	num2 := 0
+
+	_, err := Div(num1, num2)
+
+	assert.Errorf(t, err, "deve retornar erro se o denominador for 00")
+	assert.Equal(t, err.Error(), "O demoninador não pode ser 0")
 }
