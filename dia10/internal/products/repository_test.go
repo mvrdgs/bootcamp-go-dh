@@ -55,8 +55,16 @@ func TestRepository_UpdateName(t *testing.T) {
 	}}
 	db := Store{products: products, updated: false}
 	repo := NewRepository(&db)
+	expected := Product{
+		ID:    1,
+		Name:  "updated",
+		Type:  "test",
+		Count: 1,
+		Price: 1,
+	}
 
-	repo.UpdateName(1, "atualizado")
+	result, _ := repo.UpdateName(1, "updated")
 
 	assert.True(t, db.updated)
+	assert.Equal(t, expected, result)
 }
