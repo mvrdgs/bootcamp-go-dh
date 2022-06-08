@@ -2,6 +2,7 @@ package products
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -9,11 +10,16 @@ import (
 type Store struct {
 	products []Product
 	updated  bool
+	err      error
 }
 
 func (s *Store) Read(data interface{}) error {
 	s.updated = true
 	products, _ := json.Marshal(s.products)
+	if s.err != nil {
+		return s.err
+	}
+
 	return json.Unmarshal(products, &data)
 }
 
@@ -71,6 +77,21 @@ func TestService_GetAll(t *testing.T) {
 	assert.Equal(t, products, result)
 }
 
+func TestService_GetAllError(t *testing.T) {
+	mockError := errors.New("could not get products")
+	db := Store{
+		products: []Product{},
+		updated:  false,
+		err:      mockError,
+	}
+	repo := NewRepository(&db)
+	service := NewService(repo)
+
+	_, err := service.GetAll()
+
+	assert.Error(t, err)
+}
+
 func TestRepository_UpdateName(t *testing.T) {
 	products := []Product{{
 		ID:    1,
@@ -117,4 +138,21 @@ func TestService_UpdateName(t *testing.T) {
 
 	result, _ := service.UpdateName(1, "updated")
 	assert.Equal(t, expected, result)
+}
+
+func TestService_UpdateNameError(t *testing.T) {
+	products := []Product{{
+		ID:    1,
+		Name:  "test",
+		Type:  "test",
+		Count: 1,
+		Price: 1,
+	}}
+	db := Store{products: products, updated: false}
+	repo := NewRepository(&db)
+	service := NewService(repo)
+
+	_, err := service.UpdateName(2, "updated")
+
+	assert.Error(t, err)
 }
