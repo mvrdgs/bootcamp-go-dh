@@ -45,6 +45,32 @@ func TestRepository_GetAll(t *testing.T) {
 	assert.Equal(t, products, result)
 }
 
+func TestService_GetAll(t *testing.T) {
+	products := []Product{
+		{
+			ID:    1,
+			Name:  "a",
+			Type:  "a",
+			Count: 1,
+			Price: 1,
+		},
+		{
+			ID:    2,
+			Name:  "b",
+			Type:  "b",
+			Count: 2,
+			Price: 2,
+		},
+	}
+	db := Store{products: products}
+	repo := NewRepository(&db)
+	service := NewService(repo)
+
+	result, _ := service.GetAll()
+
+	assert.Equal(t, products, result)
+}
+
 func TestRepository_UpdateName(t *testing.T) {
 	products := []Product{{
 		ID:    1,
@@ -66,5 +92,29 @@ func TestRepository_UpdateName(t *testing.T) {
 	result, _ := repo.UpdateName(1, "updated")
 
 	assert.True(t, db.updated)
+	assert.Equal(t, expected, result)
+}
+
+func TestService_UpdateName(t *testing.T) {
+	products := []Product{{
+		ID:    1,
+		Name:  "test",
+		Type:  "test",
+		Count: 1,
+		Price: 1,
+	}}
+	db := Store{products: products, updated: false}
+	repo := NewRepository(&db)
+	service := NewService(repo)
+
+	expected := Product{
+		ID:    1,
+		Name:  "updated",
+		Type:  "test",
+		Count: 1,
+		Price: 1,
+	}
+
+	result, _ := service.UpdateName(1, "updated")
 	assert.Equal(t, expected, result)
 }
