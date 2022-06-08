@@ -24,6 +24,14 @@ func (s *Store) Read(data interface{}) error {
 }
 
 func (s *Store) Write(data interface{}) error {
+	prod, _ := json.Marshal(data)
+	var store Store
+	err := json.Unmarshal(prod, &store.products)
+
+	s.products = store.products
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -155,4 +163,43 @@ func TestService_UpdateNameError(t *testing.T) {
 	_, err := service.UpdateName(2, "updated")
 
 	assert.Error(t, err)
+}
+
+func TestService_Store(t *testing.T) {
+	var products []Product
+	expected := Product{
+		ID:    1,
+		Name:  "a",
+		Type:  "a",
+		Count: 1,
+		Price: 1,
+	}
+
+	db := Store{products: products}
+	repo := NewRepository(&db)
+	service := NewService(repo)
+
+	result, _ := service.Store("a", "a", 1, 1)
+
+	assert.Equal(t, expected, result)
+}
+
+func TestService_Delete(t *testing.T) {
+	products := []Product{{
+		ID:    1,
+		Name:  "a",
+		Type:  "a",
+		Count: 1,
+		Price: 1,
+	}}
+
+	db := Store{products: products}
+	repo := NewRepository(&db)
+	service := NewService(repo)
+
+	err := service.Delete(1)
+	result, _ := service.GetAll()
+
+	assert.Nil(t, err)
+	assert.Len(t, result, 0)
 }
