@@ -20,7 +20,10 @@ func SaveProduct(id, qtd int, price float64) {
 	if err != nil {
 		table := "ID,Preco,Quantidade\n"
 		content := []byte(table)
-		os.WriteFile("./ProductInfo.csv", content, 0777)
+		err := os.WriteFile("./ProductInfo.csv", content, 0777)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 
 	f, err := os.OpenFile("./ProductInfo.csv",

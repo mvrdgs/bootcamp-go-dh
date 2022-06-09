@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mvrdgs/bootcamp-go-dh/go-web-exercicios/cmd/server/handler"
 	"github.com/mvrdgs/bootcamp-go-dh/go-web-exercicios/internal/products"
+	"log"
 )
 
 func Main() {
@@ -15,5 +16,8 @@ func Main() {
 	productsGroup := router.Group("/produtos")
 	productsGroup.GET("/", product.GetAll())
 	productsGroup.POST("/", product.Store())
-	router.Run()
+	err := router.Run()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

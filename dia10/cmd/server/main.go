@@ -77,5 +77,8 @@ func Main() {
 		pr.PATCH("/:id", p.UpdateName())
 		pr.DELETE("/:id", p.Delete())
 	}
-	r.Run()
+	err = r.Run()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

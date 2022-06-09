@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -102,5 +103,8 @@ func Tarde2() {
 		group.POST("/", createProduct)
 	}
 
-	router.Run()
+	err := router.Run()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

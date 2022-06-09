@@ -2,6 +2,7 @@ package dia9
 
 import (
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
@@ -47,5 +48,8 @@ func Aula() {
 	postRouter := router.Group("/produtos")
 	postRouter.POST("/", Salvar)
 
-	router.Run()
+	err := router.Run()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

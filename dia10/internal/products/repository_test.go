@@ -26,10 +26,10 @@ func (s *Store) Read(data interface{}) error {
 func (s *Store) Write(data interface{}) error {
 	prod, _ := json.Marshal(data)
 	err := json.Unmarshal(prod, &s.products)
-
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
