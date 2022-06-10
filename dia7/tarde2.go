@@ -28,7 +28,7 @@ type Product struct {
 }
 
 func ReadFile() Products {
-	file, _ := ioutil.ReadFile("./dia7/products.json")
+	file, _ := ioutil.ReadFile("./dia7/products_test.json")
 
 	data := Products{}
 

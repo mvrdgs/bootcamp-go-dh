@@ -1,10 +1,7 @@
 package main
 
-import (
-	"fmt"
-	"github.com/mvrdgs/bootcamp-go-dh/sprint2-dia1/calc"
-)
+import "github.com/mvrdgs/bootcamp-go-dh/dia10/cmd/server"
 
 func main() {
-	fmt.Println(calc.Sum(10, 5))
+	server.Main()
 }

@@ -58,7 +58,7 @@ func Main() {
 
 	handler.TOKEN = os.Getenv("TOKEN")
 
-	db := store.New(store.FileType, "./dia10/cmd/server/products.json")
+	db := store.New(store.FileType, "./dia10/cmd/server/products_test.json")
 	repo := products.NewRepository(db)
 	service := products.NewService(repo)
 	p := handler.NewProduct(service)
