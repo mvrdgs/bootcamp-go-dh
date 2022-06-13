@@ -80,6 +80,6 @@ func TestProduct_Store(t *testing.T) {
 	req, rr := createRequestTest(http.MethodPost, "/products", body)
 
 	r.ServeHTTP(rr, req)
-	
+
 	assert.Equal(t, 201, rr.Code)
 }
