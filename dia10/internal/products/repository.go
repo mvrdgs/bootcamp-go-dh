@@ -1,160 +1,124 @@
 package products
 
 import (
-	"fmt"
-	"github.com/mvrdgs/bootcamp-go-dh/dia10/pkg/store"
+	"database/sql"
+	"github.com/mvrdgs/bootcamp-go-dh/dia10/internal/products/models"
+	"github.com/mvrdgs/bootcamp-go-dh/dia10/pkg/mysqlStore"
+	"log"
 )
 
-type Product struct {
-	ID    int     `json:"id"`
-	Name  string  `json:"name"`
-	Type  string  `json:"type"`
-	Count int     `json:"count"`
-	Price float64 `json:"price"`
-}
-
-//var ps []Product
-//var lastID int
+const (
+	InsertProduct  = "INSERT INTO products(name, type, count, price) VALUES(?, ?, ?, ?)"
+	GetProduct     = "SELECT id, name, type, count, price FROM products WHERE ID = ?"
+	GetAllProducts = "SELECT id, name, type, count, price FROM products"
+	UpdateProduct  = "UPDATE products SET name = ?, type = ?, count = ?, price = ? WHERE id = ?"
+	DeleteProduct  = "DELETE FROM products WHERE id = ?"
+)
 
 type Repository interface {
-	GetAll() ([]Product, error)
-	Store(id int, name, tipo string, count int, price float64) (Product, error)
-	LastID() (int, error)
-	Update(id int, name, tipo string, count int, price float64) (Product, error)
-	UpdateName(id int, name string) (Product, error)
+	Store(product models.Product) (models.Product, error)
+	GetOne(id int) models.Product
+	Update(product models.Product) (models.Product, error)
+	GetAll() ([]models.Product, error)
 	Delete(id int) error
 }
 
-type repository struct {
-	db store.Store
+type repository struct{}
+
+func NewRepository() Repository {
+	return &repository{}
 }
 
-func (r *repository) GetAll() ([]Product, error) {
-	var ps []Product
-	err := r.db.Read(&ps)
+func (r *repository) Store(product models.Product) (models.Product, error) {
+	db := mysqlStore.StorageDB
+	stmt, err := db.Prepare(InsertProduct)
 	if err != nil {
-		return ps, err
+		log.Fatalln(err)
 	}
-	return ps, nil
-}
-
-func (r *repository) Store(id int, name, tipo string, count int, price float64) (Product, error) {
-	//p := Product{id, name, tipo, count, price}
-	//ps = append(ps, p)
-	//lastID = p.ID
-	//return p, nil
-	var ps []Product
-	err := r.db.Read(&ps)
+	defer stmt.Close()
+	var result sql.Result
+	result, err = stmt.Exec(product.Name, product.Type, product.Count, product.Price)
 	if err != nil {
-		return Product{}, err
+		return models.Product{}, err
 	}
-	p := Product{id, name, tipo, count, price}
-	ps = append(ps, p)
-	if err := r.db.Write(ps); err != nil {
-		return Product{}, err
-	}
-	return p, nil
+	insertedId, _ := result.LastInsertId()
+	product.ID = int(insertedId)
+
+	return product, nil
 }
 
-func (r *repository) LastID() (int, error) {
-	var ps []Product
-	if err := r.db.Read(&ps); err != nil {
-		return 0, err
+func (r *repository) GetOne(id int) models.Product {
+	db := mysqlStore.StorageDB
+
+	var product models.Product
+	rows, err := db.Query(GetProduct, id)
+	if err != nil {
+		log.Println(err.Error())
+		return product
 	}
 
-	if len(ps) == 0 {
-		return 0, nil
-	}
-
-	return ps[len(ps)-1].ID, nil
-}
-
-func (r *repository) Update(id int, name, tipo string, count int, price float64) (Product, error) {
-	var ps []Product
-	if err := r.db.Read(&ps); err != nil {
-		return Product{}, err
-	}
-
-	p := Product{
-		Name:  name,
-		Type:  tipo,
-		Count: count,
-		Price: price,
-	}
-
-	updated := false
-	for i := range ps {
-		if ps[i].ID == id {
-			p.ID = id
-			ps[i] = p
-			updated = true
+	for rows.Next() {
+		if err := rows.Scan(&product.ID, &product.Name, &product.Type, &product.Count, &product.Price); err != nil {
+			log.Println(err.Error())
+			return product
 		}
 	}
-	if !updated {
-		return Product{}, fmt.Errorf("Produto %d não encontrado", id)
-	}
-
-	if err := r.db.Write(ps); err != nil {
-		return Product{}, err
-	}
-	return p, nil
+	return product
 }
 
-func (r *repository) UpdateName(id int, name string) (Product, error) {
-	var ps []Product
-	if err := r.db.Read(&ps); err != nil {
-		return Product{}, err
+func (r *repository) Update(product models.Product) (models.Product, error) {
+	db := mysqlStore.StorageDB
+	stmt, err := db.Prepare(UpdateProduct)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(product.Name, product.Type, product.Count, product.Price, product.ID)
+	if err != nil {
+		log.Println(err.Error())
+		return models.Product{}, err
+	}
+	return product, nil
+}
+
+func (r *repository) GetAll() ([]models.Product, error) {
+	db := mysqlStore.StorageDB
+
+	var products []models.Product
+
+	rows, err := db.Query(GetAllProducts)
+	if err != nil {
+		log.Println(err.Error())
+		return products, err
 	}
 
-	var p Product
-	updated := false
-	for i := range ps {
-		if ps[i].ID == id {
-			ps[i].Name = name
-			updated = true
-			p = ps[i]
+	for rows.Next() {
+		var product models.Product
+		if err := rows.Scan(&product.ID, &product.Name, &product.Type, &product.Count, &product.Price); err != nil {
+			log.Println(err.Error())
+			return products, err
 		}
+		products = append(products, product)
 	}
-
-	if !updated {
-		return Product{}, fmt.Errorf("Produto %d não encontrado", id)
-	}
-
-	if err := r.db.Write(ps); err != nil {
-		return Product{}, err
-	}
-
-	return p, nil
+	return products, err
 }
 
 func (r *repository) Delete(id int) error {
-	var ps []Product
-	if err := r.db.Read(&ps); err != nil {
+	db := mysqlStore.StorageDB
+
+	stmt, err := db.Prepare(DeleteProduct)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		log.Println(err.Error())
 		return err
 	}
 
-	deleted := false
-	var index int
-	for i := range ps {
-		if ps[i].ID == id {
-			index = i
-			deleted = true
-		}
-	}
-
-	if !deleted {
-		return fmt.Errorf("Produto %d não encontrado", id)
-	}
-
-	ps = append(ps[:index], ps[index+1:]...)
-	if err := r.db.Write(ps); err != nil {
-		return err
-	}
 	return nil
-}
-
-func NewRepository(db store.Store) Repository {
-	return &repository{
-		db: db,
-	}
 }

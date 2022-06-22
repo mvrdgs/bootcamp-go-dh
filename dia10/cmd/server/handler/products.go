@@ -51,11 +51,11 @@ func (p *Product) GetAll() gin.HandlerFunc {
 // StoreProducts godoc
 // @Sumary Store products
 // @Tags Products
-// @Description store products
+// @Description jsonStore products
 // @Accept json
 // @Produce json
 // @Param token header string true "token"
-// @Param product body request true "Product to store"
+// @Param product body request true "Product to jsonStore"
 // @Success 201 {object} web.Response
 // @Failure 401 {object} web.Response
 // @Failure 400 {object} web.Response

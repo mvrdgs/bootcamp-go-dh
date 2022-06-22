@@ -1,4 +1,4 @@
-package store
+package jsonStore
 
 import (
 	"encoding/json"

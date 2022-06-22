@@ -65,14 +65,14 @@ paths:
     post:
       consumes:
       - application/json
-      description: store products
+      description: jsonStore products
       parameters:
       - description: token
         in: header
         name: token
         required: true
         type: string
-      - description: Product to store
+      - description: Product to jsonStore
         in: body
         name: product
         required: true

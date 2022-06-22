@@ -5,7 +5,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/mvrdgs/bootcamp-go-dh/dia10/cmd/server/handler"
 	"github.com/mvrdgs/bootcamp-go-dh/dia10/internal/products"
-	"github.com/mvrdgs/bootcamp-go-dh/dia10/pkg/store"
+	"github.com/mvrdgs/bootcamp-go-dh/dia10/pkg/jsonStore"
 	"github.com/mvrdgs/bootcamp-go-dh/dia10/pkg/web"
 	"github.com/mvrdgs/bootcamp-go-dh/docs"
 	"github.com/swaggo/files"
@@ -58,7 +58,7 @@ func Main() {
 
 	handler.TOKEN = os.Getenv("TOKEN")
 
-	db := store.New(store.FileType, "./dia10/cmd/server/products_test.json")
+	db := jsonStore.New(jsonStore.FileType, "./dia10/cmd/server/products_test.json")
 	repo := products.NewRepository(db)
 	service := products.NewService(repo)
 	p := handler.NewProduct(service)

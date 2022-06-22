@@ -67,7 +67,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "store products",
+                "description": "jsonStore products",
                 "consumes": [
                     "application/json"
                 ],
@@ -86,7 +86,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Product to store",
+                        "description": "Product to jsonStore",
                         "name": "product",
                         "in": "body",
                         "required": true,
