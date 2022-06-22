@@ -1,4 +1,4 @@
-package products
+package jsonDB
 
 import (
 	"fmt"

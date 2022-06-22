@@ -1,8 +1,9 @@
-package products
+package jsonDB
 
 import (
 	"encoding/json"
 	"errors"
+	products2 "github.com/mvrdgs/bootcamp-go-dh/dia10/internal/products"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -51,7 +52,7 @@ func TestRepository_GetAll(t *testing.T) {
 		},
 	}
 	db := Store{products: products}
-	repo := NewRepository(&db)
+	repo := products2.NewRepository(&db)
 	result, _ := repo.GetAll()
 
 	assert.Equal(t, products, result)
@@ -75,8 +76,8 @@ func TestService_GetAll(t *testing.T) {
 		},
 	}
 	db := Store{products: products}
-	repo := NewRepository(&db)
-	service := NewService(repo)
+	repo := products2.NewRepository(&db)
+	service := products2.NewService(repo)
 
 	result, _ := service.GetAll()
 
@@ -90,8 +91,8 @@ func TestService_GetAllError(t *testing.T) {
 		updated:  false,
 		err:      mockError,
 	}
-	repo := NewRepository(&db)
-	service := NewService(repo)
+	repo := products2.NewRepository(&db)
+	service := products2.NewService(repo)
 
 	_, err := service.GetAll()
 
@@ -107,7 +108,7 @@ func TestRepository_UpdateName(t *testing.T) {
 		Price: 1,
 	}}
 	db := Store{products: products, updated: false}
-	repo := NewRepository(&db)
+	repo := products2.NewRepository(&db)
 	expected := Product{
 		ID:    1,
 		Name:  "updated",
@@ -131,8 +132,8 @@ func TestService_UpdateName(t *testing.T) {
 		Price: 1,
 	}}
 	db := Store{products: products, updated: false}
-	repo := NewRepository(&db)
-	service := NewService(repo)
+	repo := products2.NewRepository(&db)
+	service := products2.NewService(repo)
 
 	expected := Product{
 		ID:    1,
@@ -155,8 +156,8 @@ func TestService_UpdateNameError(t *testing.T) {
 		Price: 1,
 	}}
 	db := Store{products: products, updated: false}
-	repo := NewRepository(&db)
-	service := NewService(repo)
+	repo := products2.NewRepository(&db)
+	service := products2.NewService(repo)
 
 	_, err := service.UpdateName(2, "updated")
 
@@ -174,8 +175,8 @@ func TestService_Store(t *testing.T) {
 	}
 
 	db := Store{products: products}
-	repo := NewRepository(&db)
-	service := NewService(repo)
+	repo := products2.NewRepository(&db)
+	service := products2.NewService(repo)
 
 	result, _ := service.Store("a", "a", 1, 1)
 
@@ -192,8 +193,8 @@ func TestService_Delete(t *testing.T) {
 	}}
 
 	db := Store{products: products}
-	repo := NewRepository(&db)
-	service := NewService(repo)
+	repo := products2.NewRepository(&db)
+	service := products2.NewService(repo)
 
 	err := service.Delete(1)
 	result, _ := service.GetAll()
