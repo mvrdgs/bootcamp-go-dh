@@ -1,17 +1,19 @@
 package products
 
+import "github.com/mvrdgs/bootcamp-go-dh/dia10/internal/products/models"
+
 type Service interface {
-	GetAll() ([]Product, error)
-	Store(name, tipo string, count int, price float64) (Product, error)
-	Update(id int, name, tipo string, count int, price float64) (Product, error)
-	UpdateName(id int, name string) (Product, error)
+	GetAll() ([]models.Product, error)
+	Store(name, tipo string, count int, price float64) (models.Product, error)
+	Update(id int, name, tipo string, count int, price float64) (models.Product, error)
+	UpdateName(id int, name string) (models.Product, error)
 	Delete(id int) error
 }
 type service struct {
 	repository Repository
 }
 
-func (s *service) GetAll() ([]Product, error) {
+func (s *service) GetAll() ([]models.Product, error) {
 	ps, err := s.repository.GetAll()
 	if err != nil {
 		return nil, err
@@ -20,28 +22,36 @@ func (s *service) GetAll() ([]Product, error) {
 	return ps, nil
 }
 
-func (s *service) Store(name, tipo string, count int, price float64) (Product, error) {
-	lastID, err := s.repository.LastID()
-	if err != nil {
-		return Product{}, err
+func (s *service) Store(name, tipo string, count int, price float64) (models.Product, error) {
+	product := models.Product{
+		Name:  name,
+		Type:  tipo,
+		Count: count,
+		Price: price,
 	}
 
-	lastID++
-
-	product, err := s.repository.Store(lastID, name, tipo, count, price)
+	product, err := s.repository.Store(product)
 	if err != nil {
-		return Product{}, err
+		return models.Product{}, err
 	}
 
 	return product, nil
 }
 
-func (s *service) Update(id int, name, tipo string, count int, price float64) (Product, error) {
-	return s.repository.Update(id, name, tipo, count, price)
+func (s *service) Update(id int, name, tipo string, count int, price float64) (models.Product, error) {
+	product := models.Product{
+		ID:    id,
+		Name:  name,
+		Type:  tipo,
+		Count: count,
+		Price: price,
+	}
+	return s.repository.Update(product)
 }
 
-func (s *service) UpdateName(id int, name string) (Product, error) {
-	return s.repository.UpdateName(id, name)
+func (s *service) UpdateName(id int, name string) (models.Product, error) {
+	product := models.Product{ID: id, Name: name}
+	return s.repository.UpdateName(product)
 }
 
 func (s *service) Delete(id int) error {

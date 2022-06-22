@@ -3,35 +3,39 @@ package products
 import (
 	"database/sql"
 	"github.com/mvrdgs/bootcamp-go-dh/dia10/internal/products/models"
-	"github.com/mvrdgs/bootcamp-go-dh/dia10/pkg/mysqlStore"
 	"log"
 )
 
 const (
-	InsertProduct  = "INSERT INTO products(name, type, count, price) VALUES(?, ?, ?, ?)"
-	GetProduct     = "SELECT id, name, type, count, price FROM products WHERE ID = ?"
-	GetAllProducts = "SELECT id, name, type, count, price FROM products"
-	UpdateProduct  = "UPDATE products SET name = ?, type = ?, count = ?, price = ? WHERE id = ?"
-	DeleteProduct  = "DELETE FROM products WHERE id = ?"
+	InsertProduct     = "INSERT INTO products(name, type, count, price) VALUES(?, ?, ?, ?)"
+	GetProduct        = "SELECT id, name, type, count, price FROM products WHERE ID = ?"
+	GetAllProducts    = "SELECT id, name, type, count, price FROM products"
+	UpdateProduct     = "UPDATE products SET name = ?, type = ?, count = ?, price = ? WHERE id = ?"
+	UpdateProductName = "UPDATE products SET name = ? WHERE id = ?"
+	DeleteProduct     = "DELETE FROM products WHERE id = ?"
 )
 
 type Repository interface {
 	Store(product models.Product) (models.Product, error)
 	GetOne(id int) models.Product
 	Update(product models.Product) (models.Product, error)
+	UpdateName(product models.Product) (models.Product, error)
 	GetAll() ([]models.Product, error)
 	Delete(id int) error
 }
 
-type repository struct{}
+type repository struct {
+	db *sql.DB
+}
 
-func NewRepository() Repository {
-	return &repository{}
+func NewRepository(db *sql.DB) Repository {
+	return &repository{
+		db: db,
+	}
 }
 
 func (r *repository) Store(product models.Product) (models.Product, error) {
-	db := mysqlStore.StorageDB
-	stmt, err := db.Prepare(InsertProduct)
+	stmt, err := r.db.Prepare(InsertProduct)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -48,10 +52,8 @@ func (r *repository) Store(product models.Product) (models.Product, error) {
 }
 
 func (r *repository) GetOne(id int) models.Product {
-	db := mysqlStore.StorageDB
-
 	var product models.Product
-	rows, err := db.Query(GetProduct, id)
+	rows, err := r.db.Query(GetProduct, id)
 	if err != nil {
 		log.Println(err.Error())
 		return product
@@ -67,10 +69,9 @@ func (r *repository) GetOne(id int) models.Product {
 }
 
 func (r *repository) Update(product models.Product) (models.Product, error) {
-	db := mysqlStore.StorageDB
-	stmt, err := db.Prepare(UpdateProduct)
+	stmt, err := r.db.Prepare(UpdateProduct)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 	defer stmt.Close()
 
@@ -82,12 +83,27 @@ func (r *repository) Update(product models.Product) (models.Product, error) {
 	return product, nil
 }
 
-func (r *repository) GetAll() ([]models.Product, error) {
-	db := mysqlStore.StorageDB
+func (r *repository) UpdateName(product models.Product) (models.Product, error) {
+	stmt, err := r.db.Prepare(UpdateProductName)
+	if err != nil {
+		log.Fatalln(err.Error())
+		return models.Product{}, err
+	}
+	defer stmt.Close()
 
+	_, err = stmt.Exec(product.Name, product.ID)
+	if err != nil {
+		log.Println(err.Error())
+		return models.Product{}, err
+	}
+
+	return product, nil
+}
+
+func (r *repository) GetAll() ([]models.Product, error) {
 	var products []models.Product
 
-	rows, err := db.Query(GetAllProducts)
+	rows, err := r.db.Query(GetAllProducts)
 	if err != nil {
 		log.Println(err.Error())
 		return products, err
@@ -105,9 +121,7 @@ func (r *repository) GetAll() ([]models.Product, error) {
 }
 
 func (r *repository) Delete(id int) error {
-	db := mysqlStore.StorageDB
-
-	stmt, err := db.Prepare(DeleteProduct)
+	stmt, err := r.db.Prepare(DeleteProduct)
 	if err != nil {
 		log.Println(err.Error())
 		return err

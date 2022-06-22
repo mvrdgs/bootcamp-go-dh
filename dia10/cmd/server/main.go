@@ -1,11 +1,12 @@
 package server
 
 import (
+	"database/sql"
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"github.com/mvrdgs/bootcamp-go-dh/dia10/cmd/server/handler"
 	"github.com/mvrdgs/bootcamp-go-dh/dia10/internal/products"
-	"github.com/mvrdgs/bootcamp-go-dh/dia10/pkg/jsonStore"
 	"github.com/mvrdgs/bootcamp-go-dh/dia10/pkg/web"
 	"github.com/mvrdgs/bootcamp-go-dh/docs"
 	"github.com/swaggo/files"
@@ -58,7 +59,11 @@ func Main() {
 
 	handler.TOKEN = os.Getenv("TOKEN")
 
-	db := jsonStore.New(jsonStore.FileType, "./dia10/cmd/server/products_test.json")
+	db, err := sql.Open("mysql", os.Getenv("DB"))
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
 	repo := products.NewRepository(db)
 	service := products.NewService(repo)
 	p := handler.NewProduct(service)
